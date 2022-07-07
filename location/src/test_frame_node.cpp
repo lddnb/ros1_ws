@@ -10,7 +10,6 @@
 #include "publisher/odometry_publisher.h"
 #include "tf_listener/tf_listener.h"
 
-#include "common/lua_parameter_dictionary.hpp"
 #include "common/configuration_file_resolver.hpp"
 #include "proto/test.pb.h"
 #include "proto/test2.pb.h"
