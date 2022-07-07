@@ -1,0 +1,11 @@
+syntax = "proto3";
+package location.proto;
+
+import "include/proto/test2.proto";
+
+message TestInputMessage {
+    location.proto.Test2 test1 = 1;
+    double intput_a = 2;
+    double intput_b = 3;
+    double intput_c = 4;
+}

@@ -1,0 +1,7 @@
+Log file created at: 2022/06/22 21:37:52
+Running on machine: ubuntu-ldd
+Running duration (h:mm:ss): 0:00:00
+Log line format: [IWEF]yyyymmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I20220622 21:37:52.714756 16364 test_frame_node.cpp:58] glog success
+I20220622 21:37:52.727177 16364 configuration_file_resolver.cpp:54] Found '/home/ldd/catkin_ws/src/location/configuration_files/configuration.lua' for 'configuration.lua'.
+F20220622 21:37:52.727367 16364 lua_parameter_dictionary.cpp:83] Check failed: status == 0 (3 vs. 0) [string "intput_a = 1.1,..."]:2: unexpected symbol near '='

@@ -1,0 +1,5 @@
+Log file created at: 2022/06/22 21:32:04
+Running on machine: ubuntu-ldd
+Running duration (h:mm:ss): 0:00:00
+Log line format: [IWEF]yyyymmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F20220622 21:32:04.733268 16137 lua_parameter_dictionary.cpp:116] Check failed: lua_istable(L, -1) Topmost item on Lua stack is not a table!

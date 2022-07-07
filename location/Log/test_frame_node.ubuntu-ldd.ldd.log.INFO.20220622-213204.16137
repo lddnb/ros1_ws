@@ -1,0 +1,7 @@
+Log file created at: 2022/06/22 21:32:04
+Running on machine: ubuntu-ldd
+Running duration (h:mm:ss): 0:00:00
+Log line format: [IWEF]yyyymmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I20220622 21:32:04.717597 16137 test_frame_node.cpp:58] glog success
+I20220622 21:32:04.732935 16137 configuration_file_resolver.cpp:54] Found '/home/ldd/catkin_ws/src/location/configuration_files/configuration.lua' for 'configuration.lua'.
+F20220622 21:32:04.733268 16137 lua_parameter_dictionary.cpp:116] Check failed: lua_istable(L, -1) Topmost item on Lua stack is not a table!
