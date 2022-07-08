@@ -52,7 +52,7 @@ std::vector<std::string> split(const std::string& s, char delimiter)
 
 int main(int argc, char *argv[]) {
     google::InitGoogleLogging(argv[0]);
-    FLAGS_log_dir = WORK_SPACE_PATH + "/Log";
+    FLAGS_log_dir = "/home/ldd/catkin_ws/log";
     FLAGS_alsologtostderr = 1;
 
     LOG(INFO) << "glog success" << std::endl;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
     bool transform_received = false;
     bool gnss_origin_position_inited = false;
 
-    std::string configuration_directory = "/home/ldd/catkin_ws/src/location/configuration_files";
+    std::string configuration_directory = "/home/ldd/catkin_ws/src/ros1_ws/location/configuration_files";
     std::string configuration_basename = "configuration.lua";
     //std::vector<std::string> configuration_directorys = split(configuration_directory, '/');
     auto file_resolver = std::make_unique<common::ConfigurationFileResolver>(std::vector<std::string>{configuration_directory});

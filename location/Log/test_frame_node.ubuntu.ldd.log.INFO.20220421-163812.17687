@@ -1,5 +1,0 @@
-Log file created at: 2022/04/21 16:38:12
-Running on machine: ubuntu
-Running duration (h:mm:ss): 0:00:00
-Log line format: [IWEF]yyyymmdd hh:mm:ss.uuuuuu threadid file:line] msg
-I20220421 16:38:12.524845 17687 test_frame_node.cpp:20] glog success
