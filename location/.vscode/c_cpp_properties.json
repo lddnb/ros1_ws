@@ -3,12 +3,13 @@
         {
             "name": "Linux",
             "includePath": [
-                "/opt/ros/kinetic/include",
-                "/usr/include/pcl-1.7",
+                "/opt/ros/noetic/include",
+                "/usr/include/pcl-1.10",
                 "/usr/include/eigen3",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/third_party/**",
-                "~/catkin_ws/build/location/include"
+                "~/catkin_ws/build/ros1_ws/location/include",
+                "~/catkin_ws/build/ros1_ws/location"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

@@ -140,20 +140,6 @@ int main(int argc, char *argv[]) {
                     odometry_matrix.block<3, 3>(0, 0) = imu_data.GetOrientationMatrix();
                     odometry_matrix *= lidar_to_imu_tf;
                     
-                    Eigen::Affine3f transform_2 = Eigen::Affine3f::Identity();
-                    // Define a translation of 2.5 meters on the x axis.
-                    transform_2.translation() << 0.0, 0.0, 0.0;
-                    // The same rotation matrix as before; theta radians arround Z axis
-                    transform_2.rotate(Eigen::AngleAxisf(M_PI/2, Eigen::Vector3f::UnitZ()));
-
-                    //odometry_matrix *= transform_2.matrix();
-
-                    Eigen::Matrix4f translation(4, 4);
-	                translation << 0.999998, -0.000755307, 0.00203583, 0.810544,
-                                   0.000725049, 0.99989, 0.014823, -0.307054,
-                                   -0.0020468, -0.0148215, 0.999888, 0.802724,
-                                   0,           0,         0,         1;
-
                     CloudData cloud_data_transformed;
                     pcl::transformPointCloud(*cloud_data.cloud_ptr, *cloud_data_transformed.cloud_ptr, odometry_matrix);
                     //LOG(INFO) << odometry_matrix;

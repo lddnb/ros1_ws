@@ -67,6 +67,7 @@
         "string_view": "cpp",
         "mutex": "cpp",
         "shared_mutex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "core": "cpp"
     }
 }

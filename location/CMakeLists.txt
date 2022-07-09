@@ -17,8 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     std_msgs
     pcl_ros
-    tf
-    eigen_conversions
+    tf2_ros
 )
 include_directories(${catkin_INCLUDE_DIRS})
 
