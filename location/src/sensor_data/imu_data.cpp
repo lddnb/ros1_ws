@@ -2,7 +2,7 @@
 
 namespace location {
 Eigen::Matrix3f ImuData::GetOrientationMatrix() {
-    Eigen::Quaterniond q(orientation.x, orientation.y, orientation.z, orientation.w);
+    Eigen::Quaterniond q(orientation.w, orientation.x, orientation.y, orientation.z);
     Eigen::Matrix3f matrix = q.matrix().cast<float>();
     return matrix;
 }

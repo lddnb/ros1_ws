@@ -32,7 +32,7 @@ bool GnssData::SyncData(std::deque<GnssData>& unsynced_data, std::deque<GnssData
     GnssData front_data = unsynced_data.front();
     GnssData back_data = unsynced_data.back();
     GnssData sync_data;
-    //对两个IMU数据进行线性插值
+    //对两个Gnss数据进行线性插值
     double front_scale = (back_data.time - sync_time) / (back_data.time - front_data.time);
     double back_scale = (sync_time - front_data.time) / (back_data.time - front_data.time);
     sync_data.time = sync_time;
