@@ -13,6 +13,7 @@
 #include "common/configuration_file_resolver.hpp"
 #include "proto/test.pb.h"
 #include "proto/test2.pb.h"
+#include "common/voxel_filter.h"
 
 #include <sstream>
 #include <iostream>
@@ -144,7 +145,9 @@ int main(int argc, char *argv[]) {
                     pcl::transformPointCloud(*cloud_data.cloud_ptr, *cloud_data_transformed.cloud_ptr, odometry_matrix);
                     //LOG(INFO) << odometry_matrix;
 
-                    cloud_pub_ptr->Publish(cloud_data_transformed.cloud_ptr);
+                    CloudData filter_cloud = common::VoxelFilter(cloud_data_transformed, 0.5);
+
+                    cloud_pub_ptr->Publish(filter_cloud.cloud_ptr);
                     odom_pub_ptr->Publish(odometry_matrix);
                 }
             }
