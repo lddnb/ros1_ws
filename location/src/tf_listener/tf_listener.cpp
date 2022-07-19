@@ -16,7 +16,7 @@ bool TFListener::LookupData(Eigen::Matrix4f & transform_matrix) {
         return true;
     }
     catch (tf2::TransformException &ex) {
-        LOG(WARNING) << "Look up transform matrix faild: " << ex.what();
+        LOG_EVERY_N(WARNING, 500) << "Look up transform matrix faild: " << ex.what();
         return false;
     }
 }

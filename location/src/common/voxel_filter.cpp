@@ -20,7 +20,7 @@
 #include <cmath>
 #include <random>
 #include <utility>
-#include <map>
+#include <unordered_map>
 
 namespace common {
 namespace {
@@ -41,7 +41,7 @@ std::vector<bool> RandomizedVoxelFilterIndices(
   // According to https://en.wikipedia.org/wiki/Reservoir_sampling
   std::minstd_rand0 generator;
   // std::pair<int, int>的第一个元素保存该voxel内部的点的个数, 第二个元素保存该voxel中选择的那一个点的序号
-  std::map<VoxelKeyType, std::pair<int, int>>
+  std::unordered_map<VoxelKeyType, std::pair<int, int>>
       voxel_count_and_point_index;
   // 遍历所有的点, 计算
   for (size_t i = 0; i < point_cloud.size(); i++) {
@@ -62,7 +62,6 @@ std::vector<bool> RandomizedVoxelFilterIndices(
       }
     }
   }
-
   // 为体素滤波之后的点做标记
   std::vector<bool> points_used(point_cloud.size(), false);
   for (const auto& voxel_and_index : voxel_count_and_point_index) {
@@ -75,7 +74,7 @@ std::vector<bool> RandomizedVoxelFilterIndices(
 
 
 // 进行体素滤波
-CloudData VoxelFilter(const CloudData& point_cloud, const float & resolution) {
+CloudData VoxelFilter(const CloudData & point_cloud, const float & resolution) {
   // 得到标记后的点
   std::vector<pcl::PointXYZ> point;
   for (const auto & i : point_cloud.cloud_ptr->points) {
@@ -85,13 +84,14 @@ CloudData VoxelFilter(const CloudData& point_cloud, const float & resolution) {
       point, resolution);
 
   // 生成滤波后的点云
-  std::vector<pcl::PointXYZ> filtered_points;
+  CloudData result;
   for (size_t i = 0; i < point_cloud.cloud_ptr->points.size(); i++) {
     if (points_used[i]) {
-      filtered_points.push_back(point_cloud.cloud_ptr->points[i]);
+      result.cloud_ptr->points.emplace_back(point_cloud.cloud_ptr->points[i]);
     }
   }
-  return CloudData(std::move(filtered_points));
+
+  return result;
 }
 
 }  // namespace common

@@ -19,11 +19,12 @@
 
 #include <bitset>
 #include "sensor_data/cloud_data.h"
+#include <glog/logging.h>
 
 using location::CloudData;
 
 namespace common {
-CloudData VoxelFilter(const CloudData& point_cloud, const float & resolution);
+CloudData VoxelFilter(const CloudData & point_cloud, const float & resolution);
 
 CloudData AdaptiveVoxelFilter(
     const CloudData& point_cloud,

@@ -1,4 +1,5 @@
 #include <pcl/common/transforms.h>
+#include <pcl/filters/voxel_grid.h>
 #include <glog/logging.h>
 #include <memory>
 
@@ -143,10 +144,18 @@ int main(int argc, char *argv[]) {
                     
                     CloudData cloud_data_transformed;
                     pcl::transformPointCloud(*cloud_data.cloud_ptr, *cloud_data_transformed.cloud_ptr, odometry_matrix);
-                    //LOG(INFO) << odometry_matrix;
-
-                    CloudData filter_cloud = common::VoxelFilter(cloud_data_transformed, 0.5);
-
+                    LOG(INFO) << "num before filter = " << cloud_data_transformed.cloud_ptr->points.size();    
+                    
+                    // PCL体素滤波
+                    // CloudData filter_cloud;
+                    // pcl::VoxelGrid<pcl::PointXYZ> filter_;
+                    // filter_.setLeafSize(0.25f, 0.25f, 0.25f);
+                    // filter_.setInputCloud(cloud_data_transformed.cloud_ptr);
+                    // filter_.filter(*filter_cloud.cloud_ptr);
+                    
+                    // cartographer体素滤波
+                    CloudData filter_cloud = common::VoxelFilter(cloud_data_transformed, 0.25);
+                    LOG(INFO) << "num after filter = " << filter_cloud.cloud_ptr->points.size();
                     cloud_pub_ptr->Publish(filter_cloud.cloud_ptr);
                     odom_pub_ptr->Publish(odometry_matrix);
                 }

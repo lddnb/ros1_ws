@@ -12,18 +12,6 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-#catkin
-find_package(catkin REQUIRED COMPONENTS
-    roscpp
-    std_msgs
-    pcl_ros
-    tf2_ros
-)
-include_directories(${catkin_INCLUDE_DIRS})
-
-#这句用于指定输出位置，必不可少，即使空参数
-catkin_package()
-
 include(cmake/global_definition.cmake)
 
 configure_file(
@@ -48,13 +36,26 @@ find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 #PCL
-find_package(PCL 1.7 REQUIRED)
+find_package(PCL 1.10 REQUIRED)
 list(REMOVE_ITEM PCL_LIBRARIES "vtkproj4")
 include_directories(${PCL_INCLUDE_DIRS})
+message("PCL path:", ${PCL_INCLUDE_DIRS})
 
 #GeographicLib
 add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/GeographicLib)
 include_directories(${PROJECT_SOURCE_DIR}/third_party/GeographicLib/include)
+
+#catkin
+find_package(catkin REQUIRED COMPONENTS
+    roscpp
+    std_msgs
+    pcl_ros
+    tf2_ros
+)
+include_directories(${catkin_INCLUDE_DIRS})
+
+#这句用于指定输出位置，必不可少，即使空参数
+catkin_package()
 
 set(ALL_TARGET_LIBRARIES 
     ${catkin_LIBRARIES}
