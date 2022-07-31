@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
     ros::Rate rate(100);
     while (ros::ok) {
         ros::spinOnce();
-
+        //LOG(INFO) << "cloud size " << cloud_sub_ptr->GetCloudNum();
         cloud_sub_ptr->ParseData(cloud_data_buff);
         imu_sub_ptr->ParseData(imu_data_buff);
         gnss_sub_ptr->ParseData(gnss_data_buff);
@@ -147,14 +147,14 @@ int main(int argc, char *argv[]) {
                     LOG(INFO) << "num before filter = " << cloud_data_transformed.cloud_ptr->points.size();    
                     
                     // PCL体素滤波
-                    // CloudData filter_cloud;
-                    // pcl::VoxelGrid<pcl::PointXYZ> filter_;
-                    // filter_.setLeafSize(0.25f, 0.25f, 0.25f);
-                    // filter_.setInputCloud(cloud_data_transformed.cloud_ptr);
-                    // filter_.filter(*filter_cloud.cloud_ptr);
+                    CloudData filter_cloud;
+                    pcl::VoxelGrid<pcl::PointXYZ> filter_;
+                    filter_.setLeafSize(0.25f, 0.25f, 0.25f);
+                    filter_.setInputCloud(cloud_data_transformed.cloud_ptr);
+                    filter_.filter(*filter_cloud.cloud_ptr);
                     
                     // cartographer体素滤波
-                    CloudData filter_cloud = common::VoxelFilter(cloud_data_transformed, 0.25);
+                    //CloudData filter_cloud = common::VoxelFilter(cloud_data_transformed, 0.25);
                     LOG(INFO) << "num after filter = " << filter_cloud.cloud_ptr->points.size();
                     cloud_pub_ptr->Publish(filter_cloud.cloud_ptr);
                     odom_pub_ptr->Publish(odometry_matrix);

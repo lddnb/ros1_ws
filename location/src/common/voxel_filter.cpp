@@ -23,21 +23,12 @@
 #include <unordered_map>
 
 namespace common {
-namespace {
-using VoxelKeyType = uint64_t;
-
-// 计算该点处于的voxel的序号
-VoxelKeyType GetVoxelCellIndex(const pcl::PointXYZ& point,
-                               const float resolution) {
-  const uint64_t x = std::lround(point.x / resolution);
-  const uint64_t y = std::lround(point.y / resolution);
-  const uint64_t z = std::lround(point.z / resolution);
-  return (x << 42) + (y << 21) + z;
-}
+Filter::Filter(const double & resolution)
+: resolution_(resolution) {}
 
 // 进行体素滤波, 标记体素滤波后的点
-std::vector<bool> RandomizedVoxelFilterIndices(
-    const std::vector<pcl::PointXYZ>& point_cloud, const float resolution) {
+std::vector<bool> Filter::RandomizedVoxelFilterIndices(
+    const std::vector<pcl::PointXYZ>& point_cloud) {
   // According to https://en.wikipedia.org/wiki/Reservoir_sampling
   std::minstd_rand0 generator;
   // std::pair<int, int>的第一个元素保存该voxel内部的点的个数, 第二个元素保存该voxel中选择的那一个点的序号
@@ -46,8 +37,7 @@ std::vector<bool> RandomizedVoxelFilterIndices(
   // 遍历所有的点, 计算
   for (size_t i = 0; i < point_cloud.size(); i++) {
     // 获取VoxelKeyType对应的value的引用
-    auto& voxel = voxel_count_and_point_index[GetVoxelCellIndex(
-      point_cloud[i], resolution)];
+    auto& voxel = voxel_count_and_point_index[GetVoxelCellIndex(point_cloud[i])];
     voxel.first++;
     // 如果这个体素格子只有1个点, 那这个体素格子里的点的索引就是i
     if (voxel.first == 1) {
@@ -70,28 +60,29 @@ std::vector<bool> RandomizedVoxelFilterIndices(
   return points_used;
 }
 
-}  // namespace
-
+// 计算该点处于的voxel的序号
+VoxelKeyType Filter::GetVoxelCellIndex(const pcl::PointXYZ & point) {
+  const uint64_t x = std::lround(point.x / resolution_);
+  const uint64_t y = std::lround(point.y / resolution_);
+  const uint64_t z = std::lround(point.z / resolution_);
+  return (x << 42) + (y << 21) + z;
+}
 
 // 进行体素滤波
-CloudData VoxelFilter(const CloudData & point_cloud, const float & resolution) {
+void Filter::VoxelFilter(const CloudData::CLOUD_PTR & intput_cloud, CloudData::CLOUD_PTR & output_cloud) {
   // 得到标记后的点
   std::vector<pcl::PointXYZ> point;
-  for (const auto & i : point_cloud.cloud_ptr->points) {
+  for (const auto & i : intput_cloud->points) {
     point.emplace_back(i);
   }
-  const std::vector<bool> points_used = RandomizedVoxelFilterIndices(
-      point, resolution);
+  const std::vector<bool> points_used = RandomizedVoxelFilterIndices(point);
 
   // 生成滤波后的点云
-  CloudData result;
-  for (size_t i = 0; i < point_cloud.cloud_ptr->points.size(); i++) {
+  for (size_t i = 0; i < intput_cloud->points.size(); i++) {
     if (points_used[i]) {
-      result.cloud_ptr->points.emplace_back(point_cloud.cloud_ptr->points[i]);
+      output_cloud->points.emplace_back(intput_cloud->points[i]);
     }
   }
-
-  return result;
 }
 
 }  // namespace common

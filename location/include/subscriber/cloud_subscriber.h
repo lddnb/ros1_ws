@@ -14,6 +14,8 @@ class CloudSubscriber {
 
     void ParseData(std::deque<CloudData>& deque_cloud_data);
 
+    int GetCloudNum() const {return new_cloud_data_.size();}
+
     private:
     void msg_callback(const sensor_msgs::PointCloud2::ConstPtr& cloud_msg_ptr);
 

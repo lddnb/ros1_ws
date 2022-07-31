@@ -117,3 +117,5 @@ message("ALL_SRCS = " ${ALL_SRCS})
 add_executable(test_frame_node src/test_frame_node.cpp ${ALL_SRCS} ${ALL_PROTO_SRCS})
 target_link_libraries(test_frame_node ${ALL_TARGET_LIBRARIES})
 
+add_executable(front_end_node src/front_end_node.cpp ${ALL_SRCS} ${ALL_PROTO_SRCS})
+target_link_libraries(front_end_node ${ALL_TARGET_LIBRARIES})

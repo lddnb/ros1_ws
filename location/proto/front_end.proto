@@ -1,0 +1,14 @@
+syntax = "proto3";
+package location.proto;
+
+message FrontEndOptions {
+    int32 local_frame_num = 1;
+    double key_frame_distance = 2;
+    double frame_filter_resolution = 3;
+    double loal_map_filter_resolution = 4;
+    // NDT
+    double res = 5;
+    double step_size = 6;
+    double trans_eps = 7;
+    int32 max_iter = 8;
+}

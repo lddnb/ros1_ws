@@ -24,12 +24,19 @@
 using location::CloudData;
 
 namespace common {
-CloudData VoxelFilter(const CloudData & point_cloud, const float & resolution);
+using VoxelKeyType = uint64_t;
 
-CloudData AdaptiveVoxelFilter(
-    const CloudData& point_cloud,
-    const std::vector<int>& options);
-
+class Filter 
+{
+public:
+    Filter(const double & resolution);
+    void VoxelFilter(const CloudData::CLOUD_PTR & intput_cloud, CloudData::CLOUD_PTR & output_cloud);
+private:
+    VoxelKeyType GetVoxelCellIndex(const pcl::PointXYZ & point);
+    std::vector<bool> RandomizedVoxelFilterIndices(const std::vector<pcl::PointXYZ> & point_cloud);
+    
+    double resolution_;
+};
 }  // namespace common
 
 

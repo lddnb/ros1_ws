@@ -2,7 +2,8 @@
 
 namespace location {
 CloudSubscriber::CloudSubscriber(ros::NodeHandle& nh, std::string topic_name, size_t buff_size)
-    :nh_(nh) {
+:nh_(nh) 
+{
     subscriber_ = nh_.subscribe(topic_name, buff_size, &CloudSubscriber::msg_callback, this);
 }
 
