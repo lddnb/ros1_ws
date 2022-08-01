@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
     std::cout << "option test1 c = " << options.test1().c();
 
     ros::Rate rate(100);
-    while (ros::ok) {
+    while (ros::ok()) {
         ros::spinOnce();
         //LOG(INFO) << "cloud size " << cloud_sub_ptr->GetCloudNum();
         cloud_sub_ptr->ParseData(cloud_data_buff);

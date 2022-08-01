@@ -39,23 +39,25 @@ void FrontEnd::UpdateLaserOdom(const CloudData & cloud_data, Eigen::Matrix4f & l
     pcl::removeNaNFromPointCloud(*cloud_data.cloud_ptr, *current_frame_.cloud_data.cloud_ptr, index);
 
     CloudData::CLOUD_PTR filter_cloud_ptr(new CloudData::CLOUD());
+    // LOG(INFO) << "num before filter : " << current_frame_.cloud_data.cloud_ptr->points.size();
     frame_filter_->VoxelFilter(current_frame_.cloud_data.cloud_ptr, filter_cloud_ptr);
+    // LOG(INFO) << "num after filter : " << filter_cloud_ptr->points.size();
 
     if (local_map_frame_.size() == 0) {
         current_frame_.pose = init_pose_;
         UpdateLocalMap(current_frame_);
         laser_odom = current_frame_.pose;
-        return ;
+        return;
     }
 
-    registration_ptr_->ScanMatch(current_frame_.cloud_data.cloud_ptr, predict_pose, current_frame_.pose);
+    registration_ptr_->ScanMatch(filter_cloud_ptr, predict_pose, current_frame_.pose);
     laser_odom = current_frame_.pose;
 
     step_pose = last_pose.inverse() * current_frame_.pose;
     predict_pose = current_frame_.pose * step_pose;
     last_pose = current_frame_.pose;
 
-    if ((Eigen::Affine3f(last_key_frame_pose).inverse() * Eigen::Affine3f(current_frame_.pose)).translation().norm() > 
+    if (Eigen::Affine3f(last_key_frame_pose.inverse() * current_frame_.pose).translation().norm() > 
         options_.key_frame_distance())
     {
         UpdateLocalMap(current_frame_);
