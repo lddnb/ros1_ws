@@ -24,5 +24,7 @@ class CloudSubscriber {
     ros::Subscriber subscriber_;
 
     std::deque<CloudData> new_cloud_data_;
+
+    std::mutex buff_mutex_; 
 };
 }

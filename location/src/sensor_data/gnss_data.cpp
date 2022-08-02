@@ -18,10 +18,11 @@ bool GnssData::SyncData(std::deque<GnssData>& unsynced_data, std::deque<GnssData
         }
         if (sync_time - unsynced_data.front().time > 0.2) {
             unsynced_data.pop_front();
-            return false;
+            break;
         }
         if (unsynced_data.at(1).time - sync_time > 0.2) {
-            return false;
+            unsynced_data.pop_front();
+            break;
         }
         break;
     }
@@ -29,8 +30,8 @@ bool GnssData::SyncData(std::deque<GnssData>& unsynced_data, std::deque<GnssData
     if (unsynced_data.size() < 2) {
         return false;
     }
-    GnssData front_data = unsynced_data.front();
-    GnssData back_data = unsynced_data.back();
+    GnssData front_data = unsynced_data.at(0);
+    GnssData back_data = unsynced_data.at(1);
     GnssData sync_data;
     //对两个Gnss数据进行线性插值
     double front_scale = (back_data.time - sync_time) / (back_data.time - front_data.time);

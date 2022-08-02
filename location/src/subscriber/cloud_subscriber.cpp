@@ -9,12 +9,14 @@ CloudSubscriber::CloudSubscriber(ros::NodeHandle& nh, std::string topic_name, si
 
 void CloudSubscriber::ParseData(std::deque<CloudData>& deque_cloud_data) {
     if (new_cloud_data_.size() > 0) {
+        std::lock_guard<std::mutex> lock(buff_mutex_);
         deque_cloud_data.insert(deque_cloud_data.end(), new_cloud_data_.begin(), new_cloud_data_.end());
         new_cloud_data_.clear();
     }
 }
 
 void CloudSubscriber::msg_callback(const sensor_msgs::PointCloud2::ConstPtr& cloud_msg_ptr) {
+    std::lock_guard<std::mutex> lock(buff_mutex_);
     CloudData cloud_data;
     cloud_data.time = cloud_msg_ptr->header.stamp.toSec();
     pcl::fromROSMsg(*cloud_msg_ptr, *cloud_data.cloud_ptr);

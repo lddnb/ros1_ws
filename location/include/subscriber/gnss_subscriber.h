@@ -20,6 +20,8 @@ class GnssSubscriber {
     ros::Subscriber subscriber_;
 
     std::deque<GnssData> new_gnss_data_;
+
+    std::mutex buff_mutex_; 
 };
 
 }

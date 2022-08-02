@@ -8,12 +8,14 @@ GnssSubscriber::GnssSubscriber(ros::NodeHandle& nh, std::string topic_name, size
 
 void GnssSubscriber::ParseData(std::deque<GnssData>& deque_gnss_data) {
     if (new_gnss_data_.size() > 0) {
+        std::lock_guard<std::mutex> lock(buff_mutex_);
         deque_gnss_data.insert(deque_gnss_data.end(), new_gnss_data_.begin(), new_gnss_data_.end());
         new_gnss_data_.clear();
     }
 }
 
 void GnssSubscriber::msg_callback(const sensor_msgs::NavSatFix::ConstPtr& nav_sat_fix_ptr) {
+    std::lock_guard<std::mutex> lock(buff_mutex_);
     GnssData gnss_data;
     gnss_data.time = nav_sat_fix_ptr->header.stamp.toSec();
     gnss_data.latitude = nav_sat_fix_ptr->latitude;
