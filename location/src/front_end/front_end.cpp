@@ -101,4 +101,4 @@ bool FrontEnd::UpdateLocalMap(const Frame & new_key_frame)
     return true;
 }
 
-}
+}  // namespace location
