@@ -24,7 +24,7 @@ void VelocitySubscriber::msg_callback(const geometry_msgs::TwistStamped::ConstPt
     new_velocity_data_.emplace_back(velocity_data);
 }
 
-void VelocitySubscriber::ParseData(std::deque<VelocitySubscriber>& deque_velocity_data)
+void VelocitySubscriber::ParseData(std::deque<VelocityData>& deque_velocity_data)
 {
     if (new_velocity_data_.size() > 0) {
         std::lock_guard<std::mutex> lock(buff_mutex_);

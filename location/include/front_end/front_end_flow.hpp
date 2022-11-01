@@ -27,6 +27,7 @@ private:
     bool InitGNSS();
     bool HasData();
     bool ValidData();
+    bool PublishData();
     bool UpdateGNSSOdometry();
     bool UpdateLaserOdometry();
 

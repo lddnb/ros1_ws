@@ -10,7 +10,7 @@ class VelocitySubscriber {
     public:
     VelocitySubscriber(ros::NodeHandle& nh, std::string topic_name, size_t buff_size);
 
-    void ParseData(std::deque<VelocitySubscriber>& deque_velocity_data);
+    void ParseData(std::deque<VelocityData>& deque_velocity_data);
 
     private:
     void msg_callback(const geometry_msgs::TwistStamped::ConstPtr& twist_msg_ptr);
@@ -19,7 +19,7 @@ class VelocitySubscriber {
     ros::NodeHandle nh_;
     ros::Subscriber subscriber_;
 
-    std::deque<VelocitySubscriber> new_velocity_data_;
+    std::deque<VelocityData> new_velocity_data_;
 
     std::mutex buff_mutex_; 
 };
