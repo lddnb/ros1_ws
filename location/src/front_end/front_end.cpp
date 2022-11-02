@@ -29,6 +29,8 @@ FrontEnd::FrontEnd(const proto::FrontEndOptions & options)
     registration_ptr_ = std::make_shared<NDT>(options_);
     frame_filter_ = std::make_shared<common::Filter>(options_.frame_filter_resolution());
     local_map_filter_ = std::make_shared<common::Filter>(options_.loal_map_filter_resolution());
+    current_scan_ptr_.reset(new CloudData::CLOUD());
+    has_new_local_map_ = false;
 }
 
 void FrontEnd::UpdateLaserOdom(const CloudData & cloud_data, Eigen::Matrix4f & laser_odom)
@@ -50,7 +52,7 @@ void FrontEnd::UpdateLaserOdom(const CloudData & cloud_data, Eigen::Matrix4f & l
         return;
     }
 
-    registration_ptr_->ScanMatch(filter_cloud_ptr, predict_pose, current_frame_.pose);
+    registration_ptr_->ScanMatch(filter_cloud_ptr, predict_pose, current_scan_ptr_, current_frame_.pose);
     laser_odom = current_frame_.pose;
 
     step_pose = last_pose.inverse() * current_frame_.pose;
@@ -89,6 +91,7 @@ bool FrontEnd::UpdateLocalMap(const Frame & new_key_frame)
                                  frame.pose);
         *local_map_ptr_ += * tranform_cloud_ptr;
     }
+    has_new_local_map_ = true;
 
     if (local_map_frame_.size() < static_cast<size_t>(options_.local_frame_num())) {
         registration_ptr_->SetTargetCloud(local_map_ptr_);
@@ -99,6 +102,28 @@ bool FrontEnd::UpdateLocalMap(const Frame & new_key_frame)
     }
     LOG(INFO) << "Update local map with new key frame";
     return true;
+}
+
+bool FrontEnd::GetCurrentScan(CloudData::CLOUD_PTR & current_scan_ptr)
+{
+    pcl::VoxelGrid<pcl::PointXYZ> filter_;
+    filter_.setLeafSize(0.25f, 0.25f, 0.25f);
+    filter_.setInputCloud(current_scan_ptr_);
+    filter_.filter(*current_scan_ptr);
+    return true;
+}
+bool FrontEnd::GetNewLocalMap(CloudData::CLOUD_PTR & local_map_ptr)
+{
+    if (has_new_local_map_) {
+        pcl::VoxelGrid<pcl::PointXYZ> filter_;
+        filter_.setLeafSize(0.25f, 0.25f, 0.25f);
+        filter_.setInputCloud(local_map_ptr_);
+        filter_.filter(*local_map_ptr);
+        has_new_local_map_ = false;
+        return true;
+    }
+    return false;
+    
 }
 
 }  // namespace location

@@ -24,6 +24,8 @@ public:
     FrontEnd(const proto::FrontEndOptions & options);
     void UpdateLaserOdom(const CloudData & cloud_data, Eigen::Matrix4f & laser_odom);
     void SetInitPose(Eigen::Matrix4f & init_pose);
+    bool GetCurrentScan(CloudData::CLOUD_PTR & current_scan_ptr);
+    bool GetNewLocalMap(CloudData::CLOUD_PTR & local_map_ptr);
 
 private:
     // todo:根据options重载两个fliter
@@ -40,6 +42,7 @@ private:
 
     std::deque<Frame> local_map_frame_;
     CloudData::CLOUD_PTR local_map_ptr_;
+    CloudData::CLOUD_PTR current_scan_ptr_;
 
     Eigen::Matrix4f step_pose;
     Eigen::Matrix4f last_pose;
@@ -47,6 +50,8 @@ private:
     Eigen::Matrix4f last_key_frame_pose;
 
     proto::FrontEndOptions options_;
+
+    bool has_new_local_map_;
 };
 
 }
