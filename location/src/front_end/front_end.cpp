@@ -107,7 +107,7 @@ bool FrontEnd::UpdateLocalMap(const Frame & new_key_frame)
 bool FrontEnd::GetCurrentScan(CloudData::CLOUD_PTR & current_scan_ptr)
 {
     pcl::VoxelGrid<pcl::PointXYZ> filter_;
-    filter_.setLeafSize(0.25f, 0.25f, 0.25f);
+    filter_.setLeafSize(0.1f, 0.1f, 0.1f);
     filter_.setInputCloud(current_scan_ptr_);
     filter_.filter(*current_scan_ptr);
     return true;
@@ -116,7 +116,7 @@ bool FrontEnd::GetNewLocalMap(CloudData::CLOUD_PTR & local_map_ptr)
 {
     if (has_new_local_map_) {
         pcl::VoxelGrid<pcl::PointXYZ> filter_;
-        filter_.setLeafSize(0.25f, 0.25f, 0.25f);
+        filter_.setLeafSize(0.1f, 0.1f, 0.1f);
         filter_.setInputCloud(local_map_ptr_);
         filter_.filter(*local_map_ptr);
         has_new_local_map_ = false;

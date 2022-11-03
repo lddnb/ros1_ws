@@ -16,7 +16,7 @@ namespace location {
 class FrontEndFlow
 {
 public:
-    FrontEndFlow(const ros::NodeHandle & nh, const proto::FrontEndOptions & options);
+    FrontEndFlow(ros::NodeHandle & nh, const proto::FrontEndOptions & options);
 
     bool Run();
     bool PublishGlobalMap();
@@ -60,6 +60,6 @@ private:
     CloudData::CLOUD_PTR current_scan_ptr_;
     Eigen::Matrix4f gnss_odometry_;
     Eigen::Matrix4f laser_odometry_;
-}
+};
 
 } // namespace location

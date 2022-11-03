@@ -2,7 +2,7 @@
 
 namespace location {
 
-FrontEndFlow::FrontEndFlow(const ros::NodeHandle & nh, const proto::FrontEndOptions & options)
+FrontEndFlow::FrontEndFlow(ros::NodeHandle & nh, const proto::FrontEndOptions & options)
 {
     cloud_sub_ptr_ = std::make_shared<CloudSubscriber>(nh, "/kitti/velo/pointcloud", 100000);
     imu_sub_ptr_ = std::make_shared<IMUSubscriber>(nh, "/kitti/oxts/imu", 1000000);
@@ -30,10 +30,10 @@ bool FrontEndFlow::Run()
     if (!ReadData()) {
         return false;
     }
-    if (!InitCalibration) {
+    if (!InitCalibration()) {
         return false;
     }
-    if (!InitGNSS) {
+    if (!InitGNSS()) {
         return false;
     }
 
@@ -79,6 +79,8 @@ bool FrontEndFlow::ReadData()
         }
         sensor_init = true;
     }
+
+    return true;
 }
 
 bool FrontEndFlow::InitCalibration()
@@ -162,8 +164,8 @@ bool FrontEndFlow::UpdateLaserOdometry()
     
     float x, y, z, roll, pitch, yaw;
     pcl::getTranslationAndEulerAngles (Eigen::Affine3f(laser_odometry_), x, y, z, roll, pitch, yaw);
-    LOG(INFO) << "x = " << x << ", y = " << y << ", z = " << z;
-    LOG(INFO) << "roll = " << roll << ", pitch = " << pitch << ", yaw = " << yaw;
+    // LOG(INFO) << "x = " << x << ", y = " << y << ", z = " << z;
+    // LOG(INFO) << "roll = " << roll << ", pitch = " << pitch << ", yaw = " << yaw;
     return true;
 }
 
