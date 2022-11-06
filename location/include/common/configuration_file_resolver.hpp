@@ -20,7 +20,8 @@
 #include <vector>
 
 #include "common/lua_parameter_dictionary.hpp"
-
+namespace location
+{
 namespace common {
 
 // A 'FileResolver' for the 'LuaParameterDictionary' that reads files from disk.
@@ -44,5 +45,6 @@ class ConfigurationFileResolver : public FileResolver {
 };
 
 }  // namespace common
+}  // namespace location
 
 #endif  // CARTOGRAPHER_COMMON_CONFIGURATION_FILE_RESOLVER_H_

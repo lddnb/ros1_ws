@@ -22,6 +22,8 @@ class IMUSubscriber {
     ros::Subscriber subscriber_;
 
     std::deque<ImuData> new_imu_data_;
+
+    std::mutex buff_mutex_; 
 };
 
 }

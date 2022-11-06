@@ -23,6 +23,7 @@ bool ImuData::SyncData(std::deque<ImuData>& unsynced_data, std::deque<ImuData>& 
             return false;
         }
         if (unsynced_data.at(1).time - sync_time > 0.2) {
+            unsynced_data.pop_front();
             return false;
         }
         break;
@@ -32,8 +33,8 @@ bool ImuData::SyncData(std::deque<ImuData>& unsynced_data, std::deque<ImuData>& 
         return false;
     }
 
-    ImuData front_data = unsynced_data.front();
-    ImuData back_data = unsynced_data.back();
+    ImuData front_data = unsynced_data.at(0);
+    ImuData back_data = unsynced_data.at(1);
     ImuData sync_data;
     //对两个IMU数据进行线性插值
     double front_scale = (back_data.time - sync_time) / (back_data.time - front_data.time);

@@ -14,12 +14,12 @@
 #include "common/configuration_file_resolver.hpp"
 #include "proto/test.pb.h"
 #include "proto/test2.pb.h"
-#include "common/voxel_filter.h"
 
 #include <sstream>
 #include <iostream>
 
 using namespace location;
+using namespace location::common;
 
 proto::Test2 CreateTest2options(common::LuaParameterDictionary* const lua_parameter_dictionary) {
     proto::Test2 options;
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
     std::cout << "option test1 c = " << options.test1().c();
 
     ros::Rate rate(100);
-    while (ros::ok) {
+    while (ros::ok()) {
         ros::spinOnce();
         //LOG(INFO) << "cloud size " << cloud_sub_ptr->GetCloudNum();
         cloud_sub_ptr->ParseData(cloud_data_buff);

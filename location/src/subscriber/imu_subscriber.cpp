@@ -8,12 +8,14 @@ IMUSubscriber::IMUSubscriber(ros::NodeHandle& nh, std::string topic_name, size_t
 
 void IMUSubscriber::ParseData(std::deque<ImuData>& deque_imu_data) {
     if (new_imu_data_.size() > 0) {
+        std::lock_guard<std::mutex> lock(buff_mutex_);
         deque_imu_data.insert(deque_imu_data.end(), new_imu_data_.begin(), new_imu_data_.end());
         new_imu_data_.clear();
     }
 }
 
 void IMUSubscriber::msg_callback(const sensor_msgs::ImuConstPtr& imu_msg_ptr) {
+    std::lock_guard<std::mutex> lock(buff_mutex_);
     ImuData imu_data;
     imu_data.time = imu_msg_ptr->header.stamp.toSec();
     imu_data.linear_acceleration.x = imu_msg_ptr->linear_acceleration.x;

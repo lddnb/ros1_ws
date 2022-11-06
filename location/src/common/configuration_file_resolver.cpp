@@ -24,7 +24,8 @@
 
 #include "common/config.h"
 
-
+namespace location
+{
 namespace common {
 
 /**
@@ -79,3 +80,4 @@ std::string ConfigurationFileResolver::GetFileContentOrDie(
 }
 
 }  // namespace common
+}  // namespace location

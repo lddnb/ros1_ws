@@ -34,6 +34,8 @@
 #include <functional>
 #include <memory>
 
+namespace location
+{
 namespace common {
 
 namespace {
@@ -495,3 +497,4 @@ int LuaParameterDictionary::LuaRead(lua_State* L) {
 }
 
 }  // namespace common
+}  // namespace location

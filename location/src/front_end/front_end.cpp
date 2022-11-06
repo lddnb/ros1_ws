@@ -10,6 +10,7 @@ proto::FrontEndOptions CreateFrontEndOptions(common::LuaParameterDictionary* con
     options.set_key_frame_distance(lua_parameter_dictionary->GetDouble("key_frame_distance"));
     options.set_frame_filter_resolution(lua_parameter_dictionary->GetDouble("frame_filter_resolution"));
     options.set_loal_map_filter_resolution(lua_parameter_dictionary->GetDouble("loal_map_filter_resolution"));
+    options.set_display_filter_resolution(lua_parameter_dictionary->GetDouble("display_filter_resolution"));
     options.set_res(lua_parameter_dictionary->GetDouble("res"));
     options.set_step_size(lua_parameter_dictionary->GetDouble("step_size"));
     options.set_trans_eps(lua_parameter_dictionary->GetDouble("trans_eps"));
@@ -26,9 +27,12 @@ FrontEnd::FrontEnd(const proto::FrontEndOptions & options)
     predict_pose = Eigen::Matrix4f::Identity();
     last_key_frame_pose = Eigen::Matrix4f::Identity();
 
-    registration_ptr_ = std::make_shared<NDT>(options_);
-    frame_filter_ = std::make_shared<common::Filter>(options_.frame_filter_resolution());
-    local_map_filter_ = std::make_shared<common::Filter>(options_.loal_map_filter_resolution());
+    registration_ptr_ = std::make_unique<NDT>(options_);
+    frame_filter_ = std::make_unique<common::VoxelFilter>(options_.frame_filter_resolution());
+    local_map_filter_ = std::make_unique<common::VoxelFilter>(options_.loal_map_filter_resolution());
+    display_filter_ptr_ = std::make_unique<common::VoxelFilter>(options_.display_filter_resolution());
+    current_scan_ptr_.reset(new CloudData::CLOUD());
+    has_new_local_map_ = false;
 }
 
 void FrontEnd::UpdateLaserOdom(const CloudData & cloud_data, Eigen::Matrix4f & laser_odom)
@@ -39,23 +43,25 @@ void FrontEnd::UpdateLaserOdom(const CloudData & cloud_data, Eigen::Matrix4f & l
     pcl::removeNaNFromPointCloud(*cloud_data.cloud_ptr, *current_frame_.cloud_data.cloud_ptr, index);
 
     CloudData::CLOUD_PTR filter_cloud_ptr(new CloudData::CLOUD());
-    frame_filter_->VoxelFilter(current_frame_.cloud_data.cloud_ptr, filter_cloud_ptr);
+    // LOG(INFO) << "num before filter : " << current_frame_.cloud_data.cloud_ptr->points.size();
+    frame_filter_->Filter(current_frame_.cloud_data.cloud_ptr, filter_cloud_ptr);
+    // LOG(INFO) << "num after filter : " << filter_cloud_ptr->points.size();
 
     if (local_map_frame_.size() == 0) {
         current_frame_.pose = init_pose_;
         UpdateLocalMap(current_frame_);
         laser_odom = current_frame_.pose;
-        return ;
+        return;
     }
 
-    registration_ptr_->ScanMatch(current_frame_.cloud_data.cloud_ptr, predict_pose, current_frame_.pose);
+    registration_ptr_->ScanMatch(filter_cloud_ptr, predict_pose, current_scan_ptr_, current_frame_.pose);
     laser_odom = current_frame_.pose;
 
     step_pose = last_pose.inverse() * current_frame_.pose;
     predict_pose = current_frame_.pose * step_pose;
     last_pose = current_frame_.pose;
 
-    if ((Eigen::Affine3f(last_key_frame_pose).inverse() * Eigen::Affine3f(current_frame_.pose)).translation().norm() > 
+    if (Eigen::Affine3f(last_key_frame_pose.inverse() * current_frame_.pose).translation().norm() > 
         options_.key_frame_distance())
     {
         UpdateLocalMap(current_frame_);
@@ -71,7 +77,7 @@ void FrontEnd::SetInitPose(Eigen::Matrix4f & init_pose)
 bool FrontEnd::UpdateLocalMap(const Frame & new_key_frame)
 {
     Frame key_frame = new_key_frame;
-    //? really need?
+    //! TODO: really need?
     key_frame.cloud_data.cloud_ptr.reset(new CloudData::CLOUD(*new_key_frame.cloud_data.cloud_ptr));
 
     CloudData::CLOUD_PTR tranform_cloud_ptr(new CloudData::CLOUD());
@@ -87,16 +93,33 @@ bool FrontEnd::UpdateLocalMap(const Frame & new_key_frame)
                                  frame.pose);
         *local_map_ptr_ += * tranform_cloud_ptr;
     }
+    has_new_local_map_ = true;
 
-    if (local_map_frame_.size() < static_cast<size_t>(options_.local_frame_num())) {
+    if (local_map_frame_.size() < 10) {
         registration_ptr_->SetTargetCloud(local_map_ptr_);
     } else {
         CloudData::CLOUD_PTR filtered_local_map_ptr(new CloudData::CLOUD());
-        local_map_filter_->VoxelFilter(local_map_ptr_, filtered_local_map_ptr);
+        local_map_filter_->Filter(local_map_ptr_, filtered_local_map_ptr);
         registration_ptr_->SetTargetCloud(filtered_local_map_ptr);
     }
+    key_frame.cloud_data.cloud_ptr.reset();
     LOG(INFO) << "Update local map with new key frame";
     return true;
 }
 
+bool FrontEnd::GetCurrentScan(CloudData::CLOUD_PTR & current_scan_ptr)
+{
+    display_filter_ptr_->Filter(current_scan_ptr_, current_scan_ptr);
+    return true;
 }
+bool FrontEnd::GetNewLocalMap(CloudData::CLOUD_PTR & local_map_ptr)
+{
+    if (has_new_local_map_) {
+        display_filter_ptr_->Filter(local_map_ptr_, local_map_ptr);
+        return true;
+    }
+    return false;
+    
+}
+
+}  // namespace location

@@ -12,6 +12,7 @@ public:
     void ScanMatch(
       const pcl::PointCloud<pcl::PointXYZ>::Ptr & current_cloud,
       const Eigen::Matrix4f & init_guess,
+      CloudData::CLOUD_PTR & result_cloud,
       Eigen::Matrix4f & transform);
     void SetTargetCloud(CloudData::CLOUD_PTR target_cloud);
 private:

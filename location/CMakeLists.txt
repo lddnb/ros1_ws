@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(location)
 
-set(CMAKE_BUILD_TYPE Deubg)
+#debug还是release对pcl_ndt速度影响巨大
+set(CMAKE_BUILD_TYPE release)
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 #这句在ros中不需要，ros有制定位置
 #set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)

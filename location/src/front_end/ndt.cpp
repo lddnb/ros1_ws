@@ -26,23 +26,30 @@ NDT::~NDT() {}
 void NDT::ScanMatch(
     const pcl::PointCloud<pcl::PointXYZ>::Ptr & current_cloud,
     const Eigen::Matrix4f & init_guess,
+    CloudData::CLOUD_PTR & result_cloud,
     Eigen::Matrix4f & transform)
 {
-    ndt_ptr_->setInputCloud(current_cloud);
-    //设置点云配准目标
-    ndt_ptr_->setInputTarget(target_cloud_);
+    auto start_time = std::chrono::system_clock::now();
+    // LOG(INFO) << "current cloud point num = " << current_cloud->points.size();
+    // LOG(INFO) << "target cloud point num = " << target_cloud_->points.size();
 
+    ndt_ptr_->setInputCloud(current_cloud);
+    
     //计算需要的刚体变换以便将输入的点云匹配到目标点云
-    pcl::PointCloud<pcl::PointXYZ>::Ptr output_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-    ndt_ptr_->align(*output_cloud, init_guess);
-    LOG(INFO) << "Normal Distributions Transform has converged:" << ndt_ptr_->hasConverged()
-              << " score: " << ndt_ptr_->getFitnessScore();
+    ndt_ptr_->align(*result_cloud, init_guess);
+    // LOG(INFO) << "Normal Distributions Transform has converged:" << ndt_ptr_->hasConverged()
+    //           << " score: " << ndt_ptr_->getFitnessScore();
     transform = ndt_ptr_->getFinalTransformation();
+    auto end_time = std::chrono::system_clock::now();
+    // LOG(INFO) << "NDT cost time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()
+    //           << "ms";
 }
 
 void NDT::SetTargetCloud(CloudData::CLOUD_PTR target_cloud)
 {
     target_cloud_ = target_cloud;
+    //设置点云配准目标
+    ndt_ptr_->setInputTarget(target_cloud_);
 }
 
 }
