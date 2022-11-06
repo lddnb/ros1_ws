@@ -28,15 +28,16 @@ int main(int argc, char *argv[]) {
 
     std::string configuration_directory = "/home/ldd/catkin_ws/src/ros1_ws/location/configuration_files";
     std::string configuration_basename = "front_end_node.lua";
-    auto file_resolver = std::make_unique<common::ConfigurationFileResolver>(std::vector<std::string>{configuration_directory});
+    auto file_resolver = 
+        std::make_unique<location::common::ConfigurationFileResolver>(std::vector<std::string>{configuration_directory});
     const std::string code =
         file_resolver->GetFileContentOrDie(configuration_basename);
-    common::LuaParameterDictionary lua_parameter_dictionary(code, std::move(file_resolver));
+    location::common::LuaParameterDictionary lua_parameter_dictionary(code, std::move(file_resolver));
     proto::FrontEndOptions options = CreateFrontEndOptions(&lua_parameter_dictionary);
     LOG(INFO) << "option local_frame_num = " << options.local_frame_num();
     auto front_end_flow_ptr = std::make_shared<FrontEndFlow>(nh, options);
 
-    ros::Rate rate(10);
+    ros::Rate rate(100);
     while (ros::ok()) {
         ros::spinOnce();
         front_end_flow_ptr->Run();

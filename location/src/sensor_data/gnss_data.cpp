@@ -18,11 +18,11 @@ bool GnssData::SyncData(std::deque<GnssData>& unsynced_data, std::deque<GnssData
         }
         if (sync_time - unsynced_data.front().time > 0.2) {
             unsynced_data.pop_front();
-            break;
+            return false;
         }
         if (unsynced_data.at(1).time - sync_time > 0.2) {
             unsynced_data.pop_front();
-            break;
+            return false;
         }
         break;
     }

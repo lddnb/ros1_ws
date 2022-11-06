@@ -14,12 +14,12 @@
 #include "common/configuration_file_resolver.hpp"
 #include "proto/test.pb.h"
 #include "proto/test2.pb.h"
-#include "common/voxel_filter.h"
 
 #include <sstream>
 #include <iostream>
 
 using namespace location;
+using namespace location::common;
 
 proto::Test2 CreateTest2options(common::LuaParameterDictionary* const lua_parameter_dictionary) {
     proto::Test2 options;

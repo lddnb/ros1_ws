@@ -3,11 +3,11 @@
 #include <string>
 #include <Eigen/Core>
 
-#include "common/voxel_filter.h"
 #include "sensor_data/cloud_data.h"
 #include "front_end/ndt.hpp"
 #include "proto/front_end.pb.h"
 #include "common/configuration_file_resolver.hpp"
+#include "common/cloud_filter/voxel_filter.hpp"
 
 namespace location {
 
@@ -36,9 +36,10 @@ private:
 
 private:
     Eigen::Matrix4f init_pose_;
-    std::shared_ptr<NDT> registration_ptr_;
-    std::shared_ptr<common::Filter> frame_filter_;
-    std::shared_ptr<common::Filter> local_map_filter_;
+    std::unique_ptr<NDT> registration_ptr_;
+    std::unique_ptr<common::CloudFilterInterface> frame_filter_;
+    std::unique_ptr<common::CloudFilterInterface> local_map_filter_;
+    std::unique_ptr<common::CloudFilterInterface> display_filter_ptr_;
 
     std::deque<Frame> local_map_frame_;
     CloudData::CLOUD_PTR local_map_ptr_;

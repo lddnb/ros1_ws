@@ -15,11 +15,11 @@ bool VelocityData::SyncData(std::deque<VelocityData>& UnsyncedData, std::deque<V
         }
         if (sync_time - UnsyncedData.front().time > 0.2) {
             UnsyncedData.pop_front();
-            break;
+            return false;
         }
         if (UnsyncedData.at(1).time - sync_time > 0.2) {
             UnsyncedData.pop_front();
-            break;
+            return false;
         }
         break;
     }
@@ -41,7 +41,7 @@ bool VelocityData::SyncData(std::deque<VelocityData>& UnsyncedData, std::deque<V
     synced_data.angular_velocity.y = front_data.angular_velocity.y * front_scale + back_data.angular_velocity.y * back_scale;
     synced_data.angular_velocity.z = front_data.angular_velocity.z * front_scale + back_data.angular_velocity.z * back_scale;
 
-    SyncedData.push_back(synced_data);
+    SyncedData.emplace_back(synced_data);
 
     return true;
 }

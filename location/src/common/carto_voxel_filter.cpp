@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "common/voxel_filter.h"
+#include "common/carto_voxel_filter.hpp"
 #include "Eigen/Core"
 
 #include <cmath>

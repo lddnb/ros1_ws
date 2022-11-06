@@ -164,8 +164,8 @@ bool FrontEndFlow::UpdateLaserOdometry()
     
     float x, y, z, roll, pitch, yaw;
     pcl::getTranslationAndEulerAngles (Eigen::Affine3f(laser_odometry_), x, y, z, roll, pitch, yaw);
-    // LOG(INFO) << "x = " << x << ", y = " << y << ", z = " << z;
-    // LOG(INFO) << "roll = " << roll << ", pitch = " << pitch << ", yaw = " << yaw;
+    LOG(INFO) << "x = " << x << ", y = " << y << ", z = " << z;
+    LOG(INFO) << "roll = " << roll << ", pitch = " << pitch << ", yaw = " << yaw;
     return true;
 }
 

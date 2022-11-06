@@ -3,6 +3,7 @@ options = {
     key_frame_distance = 2.0,
     frame_filter_resolution = 0.6,
     loal_map_filter_resolution = 1.3,
+    display_filter_resolution = 0.5,
     --NDT
     res = 1.0,
     step_size = 0.1,

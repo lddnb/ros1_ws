@@ -6,6 +6,7 @@ message FrontEndOptions {
     double key_frame_distance = 2;
     double frame_filter_resolution = 3;
     double loal_map_filter_resolution = 4;
+    double display_filter_resolution = 9;
     // NDT
     double res = 5;
     double step_size = 6;

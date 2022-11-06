@@ -25,6 +25,8 @@
 #include "lua5.2/lua.hpp"
 #include "glog/logging.h"
 
+namespace location
+{
 namespace common {
 
 // Resolves file paths and file content for the Lua 'read' and 'include'
@@ -143,5 +145,6 @@ class LuaParameterDictionary {
 };
 
 }  // namespace common
+}  // namespace location
 
 #endif  // CARTOGRAPHER_COMMON_LUA_PARAMETER_DICTIONARY_H_
