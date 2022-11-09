@@ -37,8 +37,9 @@ void NDT::ScanMatch(
     
     //计算需要的刚体变换以便将输入的点云匹配到目标点云
     ndt_ptr_->align(*result_cloud, init_guess);
-    // LOG(INFO) << "Normal Distributions Transform has converged:" << ndt_ptr_->hasConverged()
-    //           << " score: " << ndt_ptr_->getFitnessScore();
+    // LOG(INFO) << " score: " << ndt_ptr_->getFitnessScore();
+    // << "Normal Distributions Transform has converged:" << ndt_ptr_->hasConverged()
+
     transform = ndt_ptr_->getFinalTransformation();
     auto end_time = std::chrono::system_clock::now();
     // LOG(INFO) << "NDT cost time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()

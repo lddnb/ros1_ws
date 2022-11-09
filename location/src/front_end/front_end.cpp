@@ -2,6 +2,7 @@
 #include "front_end/front_end.hpp"
 #include <pcl/common/transforms.h>
 #include <glog/logging.h>
+#include <iomanip>
 
 namespace location {
 proto::FrontEndOptions CreateFrontEndOptions(common::LuaParameterDictionary* const lua_parameter_dictionary) {
@@ -51,8 +52,19 @@ void FrontEnd::UpdateLaserOdom(const CloudData & cloud_data, Eigen::Matrix4f & l
         current_frame_.pose = init_pose_;
         UpdateLocalMap(current_frame_);
         laser_odom = current_frame_.pose;
+        last_pose = init_pose_;
+        predict_pose = init_pose_;
+        last_key_frame_pose = init_pose_;
         return;
     }
+    // static int match_num = 0;
+    // LOG(INFO) << "~~~~~ No." << match_num++ << " ~~~~~";
+    // LOG(INFO) << "local map frame size: " << local_map_frame_.size();
+    // LOG(INFO) << "Point Cloud TimeStamp: " << std::fixed << std::setprecision(3) << cloud_data.time;
+    // float x, y, z, roll, pitch, yaw;
+    // pcl::getTranslationAndEulerAngles (Eigen::Affine3f(predict_pose), x, y, z, roll, pitch, yaw);
+    // LOG(INFO) << "predict_pose: " << std::endl << "Translation: " << x << ", " << y << ", " << z << std::endl
+    //           << "Rotation:    " << roll << ", " << pitch << ", " << yaw;
 
     registration_ptr_->ScanMatch(filter_cloud_ptr, predict_pose, current_scan_ptr_, current_frame_.pose);
     laser_odom = current_frame_.pose;
@@ -61,8 +73,11 @@ void FrontEnd::UpdateLaserOdom(const CloudData & cloud_data, Eigen::Matrix4f & l
     predict_pose = current_frame_.pose * step_pose;
     last_pose = current_frame_.pose;
 
-    if (Eigen::Affine3f(last_key_frame_pose.inverse() * current_frame_.pose).translation().norm() > 
-        options_.key_frame_distance())
+    // if (Eigen::Affine3f(last_key_frame_pose.inverse() * current_frame_.pose).translation().norm() > 
+    //     options_.key_frame_distance())
+    if (fabs(last_key_frame_pose(0,3) - current_frame_.pose(0,3)) + 
+        fabs(last_key_frame_pose(1,3) - current_frame_.pose(1,3)) +
+        fabs(last_key_frame_pose(2,3) - current_frame_.pose(2,3)) > options_.key_frame_distance())
     {
         UpdateLocalMap(current_frame_);
         last_key_frame_pose = current_frame_.pose;
