@@ -2,6 +2,7 @@
 #include "front_end/front_end.hpp"
 #include <pcl/common/transforms.h>
 #include <glog/logging.h>
+#include <iomanip>
 
 namespace location {
 proto::FrontEndOptions CreateFrontEndOptions(common::LuaParameterDictionary* const lua_parameter_dictionary) {
@@ -56,13 +57,14 @@ void FrontEnd::UpdateLaserOdom(const CloudData & cloud_data, Eigen::Matrix4f & l
         last_key_frame_pose = init_pose_;
         return;
     }
-    static int match_num = 0;
-    LOG(INFO) << "~~~~~ No." << match_num++ << " ~~~~~";
-    LOG(INFO) << "local map frame size: " << local_map_frame_.size();
-    float x, y, z, roll, pitch, yaw;
-    pcl::getTranslationAndEulerAngles (Eigen::Affine3f(predict_pose), x, y, z, roll, pitch, yaw);
-    LOG(INFO) << "predict_pose: " << std::endl << "Translation: " << x << ", " << y << ", " << z << std::endl
-              << "Rotation:    " << roll << ", " << pitch << ", " << yaw;
+    // static int match_num = 0;
+    // LOG(INFO) << "~~~~~ No." << match_num++ << " ~~~~~";
+    // LOG(INFO) << "local map frame size: " << local_map_frame_.size();
+    // LOG(INFO) << "Point Cloud TimeStamp: " << std::fixed << std::setprecision(3) << cloud_data.time;
+    // float x, y, z, roll, pitch, yaw;
+    // pcl::getTranslationAndEulerAngles (Eigen::Affine3f(predict_pose), x, y, z, roll, pitch, yaw);
+    // LOG(INFO) << "predict_pose: " << std::endl << "Translation: " << x << ", " << y << ", " << z << std::endl
+    //           << "Rotation:    " << roll << ", " << pitch << ", " << yaw;
 
     registration_ptr_->ScanMatch(filter_cloud_ptr, predict_pose, current_scan_ptr_, current_frame_.pose);
     laser_odom = current_frame_.pose;

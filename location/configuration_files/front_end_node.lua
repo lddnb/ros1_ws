@@ -1,8 +1,9 @@
 options = {
     local_frame_num = 20,
     key_frame_distance = 2.0,
-    frame_filter_resolution = 0.6,
-    loal_map_filter_resolution = 1.3,
+    -- 两个滤波参数非常重要！！！
+    frame_filter_resolution = 1.3,
+    loal_map_filter_resolution = 0.6,
     display_filter_resolution = 0.5,
     --NDT
     res = 1.0,
