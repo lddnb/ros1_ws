@@ -1,4 +1,4 @@
-#include "publisher/odometry_publisher.h"
+#include "publisher/odometry_publisher.hpp"
 
 namespace location {
 OdometryPublisher::OdometryPublisher(ros::NodeHandle& nh,

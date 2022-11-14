@@ -1,4 +1,4 @@
-#include "sensor_data/velocity_data.h"
+#include "sensor_data/velocity_data.hpp"
 
 namespace location {
 

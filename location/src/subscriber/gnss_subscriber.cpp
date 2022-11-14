@@ -1,4 +1,4 @@
-#include "subscriber/gnss_subscriber.h"
+#include "subscriber/gnss_subscriber.hpp"
 
 namespace location {
 GnssSubscriber::GnssSubscriber(ros::NodeHandle& nh, std::string topic_name, size_t buff_size)

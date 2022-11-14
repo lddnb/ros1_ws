@@ -1,4 +1,4 @@
-#include "subscriber/imu_subscriber.h"
+#include "subscriber/imu_subscriber.hpp"
 
 namespace location {
 IMUSubscriber::IMUSubscriber(ros::NodeHandle& nh, std::string topic_name, size_t buff_size)

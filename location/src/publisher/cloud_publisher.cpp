@@ -1,4 +1,4 @@
-#include "publisher/cloud_publisher.h"
+#include "publisher/cloud_publisher.hpp"
 #include <glog/logging.h>
 
 namespace location {

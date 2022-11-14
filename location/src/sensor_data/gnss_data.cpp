@@ -1,4 +1,4 @@
-#include "sensor_data/gnss_data.h"
+#include "sensor_data/gnss_data.hpp"
 #include "glog/logging.h"
 
 bool location::GnssData::origin_position_inited = false;
