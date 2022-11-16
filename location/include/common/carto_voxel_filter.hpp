@@ -18,7 +18,7 @@
 #define CARTOGRAPHER_SENSOR_INTERNAL_VOXEL_FILTER_H_
 
 #include <bitset>
-#include "sensor_data/cloud_data.h"
+#include "sensor_data/cloud_data.hpp"
 #include <glog/logging.h>
 
 using location::CloudData;

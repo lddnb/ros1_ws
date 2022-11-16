@@ -3,7 +3,7 @@
 #include <deque>
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
-#include "sensor_data/gnss_data.h"
+#include "sensor_data/gnss_data.hpp"
 
 namespace location {
 class GnssSubscriber {

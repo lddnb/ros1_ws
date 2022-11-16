@@ -18,7 +18,7 @@ include(cmake/global_definition.cmake)
 
 configure_file(
   ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake
-  ${PROJECT_BINARY_DIR}/include/common/config.h)
+  ${PROJECT_BINARY_DIR}/include/common/config.hpp)
 
 #Glog
 find_package(Glog REQUIRED)

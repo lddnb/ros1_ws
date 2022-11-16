@@ -4,18 +4,19 @@ namespace location {
 
 FrontEndFlow::FrontEndFlow(ros::NodeHandle & nh, const proto::FrontEndOptions & options)
 {
-    cloud_sub_ptr_ = std::make_shared<CloudSubscriber>(nh, "/kitti/velo/pointcloud", 100000);
-    imu_sub_ptr_ = std::make_shared<IMUSubscriber>(nh, "/kitti/oxts/imu", 1000000);
-    gnss_sub_ptr_ = std::make_shared<GnssSubscriber>(nh, "/kitti/oxts/gps/fix", 100000);
-    velocity_sub_ptr_ = std::make_shared<VelocitySubscriber>(nh, "/kitti/oxts/gps/vel", 100000);
-    lidar_to_imu_tf_ptr_ = std::make_shared<TFListener>(nh, "imu_link", "velo_link");
-    cloud_pub_ptr_ = std::make_shared<CloudPublisher>(nh, "current_scan", 100, "map");
-    local_map_pub_ptr_ = std::make_shared<CloudPublisher>(nh, "local_map", 100, "map");
-    global_map_pub_ptr_ = std::make_shared<CloudPublisher>(nh, "global_map", 100, "map");
-    laser_odom_pub_ptr_ = std::make_shared<OdometryPublisher>(nh, "lidar_odom", "map", "lidar", 100);
-    gnss_pub_ptr_ = std::make_shared<OdometryPublisher>(nh, "gnss", "map", "lidar", 100);
+    cloud_sub_ptr_ = std::make_unique<CloudSubscriber>(nh, "/kitti/velo/pointcloud", 100000);
+    imu_sub_ptr_ = std::make_unique<IMUSubscriber>(nh, "/kitti/oxts/imu", 1000000);
+    gnss_sub_ptr_ = std::make_unique<GnssSubscriber>(nh, "/kitti/oxts/gps/fix", 100000);
+    velocity_sub_ptr_ = std::make_unique<VelocitySubscriber>(nh, "/kitti/oxts/gps/vel", 100000);
+    lidar_to_imu_tf_ptr_ = std::make_unique<TFListener>(nh, "imu_link", "velo_link");
+    cloud_pub_ptr_ = std::make_unique<CloudPublisher>(nh, "current_scan", 100, "map");
+    local_map_pub_ptr_ = std::make_unique<CloudPublisher>(nh, "local_map", 100, "map");
+    global_map_pub_ptr_ = std::make_unique<CloudPublisher>(nh, "global_map", 100, "map");
+    laser_odom_pub_ptr_ = std::make_unique<OdometryPublisher>(nh, "lidar_odom", "map", "lidar", 100);
+    gnss_pub_ptr_ = std::make_unique<OdometryPublisher>(nh, "gnss", "map", "lidar", 100);
+    distortion_adjust_ptr_ = std::make_unique<DistortionAdjust>();
     
-    front_end_ptr_ = std::make_shared<FrontEnd>(options);
+    front_end_ptr_ = std::make_unique<FrontEnd>(options);
 
     lidar_to_imu_ = Eigen::Matrix4f::Identity();
     local_map_ptr_.reset(new CloudData::CLOUD());
@@ -41,6 +42,7 @@ bool FrontEndFlow::Run()
         if (!ValidData()) {
             return false;
         }
+        TransformData();
         UpdateGNSSOdometry();
         if (UpdateLaserOdometry()) {
             PublishData();
@@ -140,6 +142,15 @@ bool FrontEndFlow::ValidData()
     gnss_data_buff_.pop_front();
     return true;
 }
+
+bool FrontEndFlow::TransformData()
+{
+  current_velocity_data_.TransformCoordinate(lidar_to_imu_);
+  distortion_adjust_ptr_->SetMotionInfo(0.1, current_velocity_data_);
+  distortion_adjust_ptr_->AdjustCloud(current_cloud_data_.cloud_ptr, current_cloud_data_.cloud_ptr);
+  return true;
+}
+
 bool FrontEndFlow::UpdateGNSSOdometry()
 {
     gnss_odometry_ = Eigen::Matrix4f::Identity();

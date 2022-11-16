@@ -4,7 +4,7 @@
 #include <deque>
 #include <sensor_msgs/Imu.h>
 
-#include "sensor_data/imu_data.h"
+#include "sensor_data/imu_data.hpp"
 
 namespace location {
 class IMUSubscriber {

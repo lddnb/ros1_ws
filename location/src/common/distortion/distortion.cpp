@@ -15,7 +15,7 @@ void DistortionAdjust::SetMotionInfo(const float & scan_period, const VelocityDa
 bool DistortionAdjust::AdjustCloud(CloudData::CLOUD_PTR & input_cloud_ptr, CloudData::CLOUD_PTR & output_cloud_ptr)
 {
   CloudData::CLOUD_PTR origin_cloud_ptr(new CloudData::CLOUD(*input_cloud_ptr));
-  output_cloud_ptr.reset();
+  output_cloud_ptr.reset(new CloudData::CLOUD());
   float orientation_space = 2.0 * M_PI;
   float delete_space = 5.0 * M_PI / 180.0;
   float start_orientation = atan2(origin_cloud_ptr->points.front().y, origin_cloud_ptr->points.front().x);
@@ -23,11 +23,11 @@ bool DistortionAdjust::AdjustCloud(CloudData::CLOUD_PTR & input_cloud_ptr, Cloud
   Eigen::AngleAxisf t_v(start_orientation, Eigen::Vector3f::UnitZ());
   Eigen::Matrix3f rotate_matrix = t_v.matrix();
   Eigen::Matrix4f transform_matrix = Eigen::Matrix4f::Identity();
-  transform_matrix.block<3, 3>(0, 0) = rotate_matrix;
+  transform_matrix.block<3, 3>(0, 0) = rotate_matrix.inverse();
   pcl::transformPointCloud(*origin_cloud_ptr, *origin_cloud_ptr, transform_matrix);
 
-  velocity_ = rotate_matrix * velocity_;
-  angular_rate_ = rotate_matrix * angular_rate_;
+  velocity_ = rotate_matrix.inverse() * velocity_;
+  angular_rate_ = rotate_matrix.inverse() * angular_rate_;
 
   for (size_t point_index = 1; point_index < origin_cloud_ptr->points.size(); ++point_index) {
     float orientation = atan2(origin_cloud_ptr->points.at(point_index).y, origin_cloud_ptr->points.at(point_index).x);

@@ -1,9 +1,10 @@
+#pragma once
 #include <deque>
 #include <memory>
 #include <string>
 #include <Eigen/Core>
 
-#include "sensor_data/cloud_data.h"
+#include "sensor_data/cloud_data.hpp"
 #include "front_end/ndt.hpp"
 #include "proto/front_end.pb.h"
 #include "common/configuration_file_resolver.hpp"
