@@ -4,6 +4,7 @@ project(location)
 #debug还是release对pcl_ndt速度影响巨大
 set(CMAKE_BUILD_TYPE release)
 SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #这句在ros中不需要，ros有制定位置
 #set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
@@ -18,7 +19,7 @@ include(cmake/global_definition.cmake)
 
 configure_file(
   ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake
-  ${PROJECT_BINARY_DIR}/include/common/config.h)
+  ${PROJECT_BINARY_DIR}/include/common/config.hpp)
 
 #Glog
 find_package(Glog REQUIRED)

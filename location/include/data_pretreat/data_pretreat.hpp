@@ -3,14 +3,15 @@
 #include <ros/ros.h>
 
 #include "global_definition/global_definition.h"
-#include "subscriber/cloud_subscriber.h"
-#include "subscriber/gnss_subscriber.h"
-#include "subscriber/imu_subscriber.h"
-#include "subscriber/velocity_subscriber.h"
-#include "publisher/cloud_publisher.h"
-#include "publisher/odometry_publisher.h"
-#include "tf_listener/tf_listener.h"
+#include "subscriber/cloud_subscriber.hpp"
+#include "subscriber/gnss_subscriber.hpp"
+#include "subscriber/imu_subscriber.hpp"
+#include "subscriber/velocity_subscriber.hpp"
+#include "publisher/cloud_publisher.hpp"
+#include "publisher/odometry_publisher.hpp"
+#include "tf_listener/tf_listener.hpp"
 #include "front_end/front_end.hpp"
+#include "common/distortion/distortion.hpp"
 
 namespace location {
 class FrontEndFlow
@@ -30,19 +31,21 @@ private:
     bool PublishData();
     bool UpdateGNSSOdometry();
     bool UpdateLaserOdometry();
+    bool TransformData();
 
 private:
-    std::shared_ptr<CloudSubscriber> cloud_sub_ptr_;
-    std::shared_ptr<IMUSubscriber> imu_sub_ptr_;
-    std::shared_ptr<GnssSubscriber> gnss_sub_ptr_;
-    std::shared_ptr<VelocitySubscriber> velocity_sub_ptr_;
-    std::shared_ptr<TFListener> lidar_to_imu_tf_ptr_;
-    std::shared_ptr<CloudPublisher> cloud_pub_ptr_;
-    std::shared_ptr<CloudPublisher> local_map_pub_ptr_;
-    std::shared_ptr<CloudPublisher> global_map_pub_ptr_;
-    std::shared_ptr<OdometryPublisher> laser_odom_pub_ptr_;
-    std::shared_ptr<OdometryPublisher> gnss_pub_ptr_;
-    std::shared_ptr<FrontEnd> front_end_ptr_;
+    std::unique_ptr<CloudSubscriber> cloud_sub_ptr_;
+    std::unique_ptr<IMUSubscriber> imu_sub_ptr_;
+    std::unique_ptr<GnssSubscriber> gnss_sub_ptr_;
+    std::unique_ptr<VelocitySubscriber> velocity_sub_ptr_;
+    std::unique_ptr<TFListener> lidar_to_imu_tf_ptr_;
+    std::unique_ptr<CloudPublisher> cloud_pub_ptr_;
+    std::unique_ptr<CloudPublisher> local_map_pub_ptr_;
+    std::unique_ptr<CloudPublisher> global_map_pub_ptr_;
+    std::unique_ptr<OdometryPublisher> laser_odom_pub_ptr_;
+    std::unique_ptr<OdometryPublisher> gnss_pub_ptr_;
+    std::unique_ptr<FrontEnd> front_end_ptr_;
+    std::unique_ptr<DistortionAdjust> distortion_adjust_ptr_;
 
     std::deque<CloudData> cloud_data_buff_;
     std::deque<ImuData> imu_data_buff_;

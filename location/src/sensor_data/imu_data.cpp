@@ -1,4 +1,4 @@
-#include "sensor_data/imu_data.h"
+#include "sensor_data/imu_data.hpp"
 
 namespace location {
 Eigen::Matrix3f ImuData::GetOrientationMatrix() {

@@ -1,4 +1,4 @@
-#include "subscriber/cloud_subscriber.h"
+#include "subscriber/cloud_subscriber.hpp"
 
 namespace location {
 CloudSubscriber::CloudSubscriber(ros::NodeHandle& nh, std::string topic_name, size_t buff_size)

@@ -16,7 +16,7 @@
 
 #ifndef CARTOGRAPHER_COMMON_CONFIG_H_
 #define CARTOGRAPHER_COMMON_CONFIG_H_
-
+namespace location{
 namespace common {
 
 constexpr char kConfigurationFilesDirectory[] =
@@ -24,5 +24,6 @@ constexpr char kConfigurationFilesDirectory[] =
 constexpr char kSourceDirectory[] = "@PROJECT_SOURCE_DIR@";
 
 }  // namespace common
+}  // namespace location
 
 #endif  // CARTOGRAPHER_COMMON_CONFIG_H_

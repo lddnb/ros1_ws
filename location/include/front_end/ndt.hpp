@@ -1,4 +1,5 @@
-#include <sensor_data/cloud_data.h>
+#pragma once
+#include <sensor_data/cloud_data.hpp>
 #include <pcl/registration/ndt.h>
 #include <Eigen/Core>
 #include "proto/front_end.pb.h"

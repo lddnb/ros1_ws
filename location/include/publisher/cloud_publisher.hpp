@@ -4,7 +4,7 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
 
-#include "sensor_data/cloud_data.h"
+#include "sensor_data/cloud_data.hpp"
 
 namespace location {
 class CloudPublisher{
