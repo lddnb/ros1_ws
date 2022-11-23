@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Eigen/src/Core/Matrix.h>
-#include <Eigen/src/Geometry/Quaternion.h>
+#include <Eigen/Dense>
 
 namespace location
 {
