@@ -12,8 +12,8 @@ namespace location
 class GraphOptimizerInterface
 {
 public:
-  GraphOptimizerInterface();
-  virtual ~GraphOptimizerInterface();
+  GraphOptimizerInterface() {};
+  virtual ~GraphOptimizerInterface() {};
   virtual bool Optimize() = 0;
   virtual bool GetOptimizedPose(std::deque<Eigen::Matrix4f> & optimized_pose) = 0;
   virtual bool GetNodeNum() = 0;

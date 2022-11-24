@@ -50,7 +50,7 @@ public:
 
   virtual bool write(std::ostream & os) const override
   {
-    Eigen::Quaterniond q;
+    Eigen::Quaterniond q = _measurement;
     os << q.w() << " " << q.x() << " " << q.y() << " " << q.z();
     for (int i = 0; i < information().rows(); ++i) {
       for (int j = i; j < information().cols(); ++j) {

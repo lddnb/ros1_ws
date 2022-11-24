@@ -42,11 +42,18 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 find_package(PCL 1.10 REQUIRED)
 list(REMOVE_ITEM PCL_LIBRARIES "vtkproj4")
 include_directories(${PCL_INCLUDE_DIRS})
-message("PCL path:", ${PCL_INCLUDE_DIRS})
 
 #GeographicLib
-add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/GeographicLib)
-include_directories(${PROJECT_SOURCE_DIR}/third_party/GeographicLib/include)
+find_package(GeographicLib REQUIRED)
+include_directories(${GeographicLib_INCLUDE_DIRS})
+
+#G2O
+list(APPEND CMAKE_MODULE_PATH /home/ldd/lib/g2o/cmake_modules)
+find_package(G2O REQUIRED)
+include_directories(${G2O_INCLUDE_DIR})
+SET(G2O_LIBRARIES ${G2O_STUFF_LIBRARY} ${G2O_CORE_LIBRARY} ${G2O_CLI_LIBRARY} ${G2O_SOLVER_CHOLMOD} ${G2O_SOLVER_CSPARSE} ${G2O_SOLVER_CSPARSE_EXTENSION} 
+${G2O_SOLVER_DENSE} ${G2O_SOLVER_PCG} ${G2O_SOLVER_SLAM2D_LINEAR} ${G2O_SOLVER_STRUCTURE_ONLY} ${G2O_SOLVER_EIGEN} ${G2O_TYPES_DATA} ${G2O_TYPES_ICP} ${G2O_TYPES_SBA}
+${G2O_TYPES_SCLAM2D} ${G2O_TYPES_SIM3} ${G2O_TYPES_SLAM2D} ${G2O_TYPES_SLAM3D})
 
 #catkin
 find_package(catkin REQUIRED COMPONENTS
@@ -66,9 +73,9 @@ set(ALL_TARGET_LIBRARIES
     ${PCL_LIBRARIES}
     ${LUA_LIBRARIES}
     ${PROTOBUF_LIBRARY}
-    #${GLOG_LIBS}
     glog::glog
-    libGeographiccc
+    ${GeographicLib_LIBRARIES}
+    ${G2O_LIBRARIES}
 )
 
 #TODO(lua->pb.h)
@@ -107,11 +114,7 @@ message("PROJECT_SOURCE_DIR = " ${PROJECT_SOURCE_DIR})
 
 file(GLOB_RECURSE ALL_SRCS "*.cpp")
 file(GLOB_RECURSE NODE_SRCS "src/*_node.cpp")
-file(GLOB_RECURSE THIRD_PARTY_SRCS "third_party/*.cpp")
-#file(GLOB_RECURSE MAKE_FILE "CMakeCXXCompilerId.cpp")
 list(REMOVE_ITEM ALL_SRCS ${NODE_SRCS})
-list(REMOVE_ITEM ALL_SRCS ${THIRD_PARTY_SRCS})
-#list(REMOVE_ITEM ALL_SRCS ${MAKE_FILE})
 
 
 message("ALL_SRCS = " ${ALL_SRCS})

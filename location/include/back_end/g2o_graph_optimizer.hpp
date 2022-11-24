@@ -47,7 +47,7 @@ public:
     const Eigen::VectorXd & noise);
   void AddSe3PriorQuaternionEdge(
     const int & se3_vertex_index,
-    const Eigen::Quaterniond & xyz,
+    const Eigen::Quaterniond & quat,
     const Eigen::VectorXd & noise);
 private:
   Eigen::MatrixXd CalculateSe3EdgeInfomationMatrix(Eigen::VectorXd noise);

@@ -43,7 +43,7 @@ public:
 
   virtual bool write(std::ostream & os) const override
   {
-    Eigen::Vector3d v;
+    Eigen::Vector3d v = _measurement;
     os << v[0] << " " << v[1] << " " << v[2];
     for (int i = 0; i < information().rows(); ++i) {
       for (int j = i; j < information().cols(); ++j) {
