@@ -1,6 +1,8 @@
 syntax = "proto3";
 package location.proto;
 
+import "proto/back_end.proto";
+
 message FrontEndOptions {
     int32 local_frame_num = 1;
     double key_frame_distance = 2;
@@ -12,4 +14,5 @@ message FrontEndOptions {
     double step_size = 6;
     double trans_eps = 7;
     int32 max_iter = 8;
+    BackEndOptions back_end_options = 10;
 }

@@ -1,0 +1,15 @@
+syntax = "proto3";
+package location.proto;
+
+message BackEndOptions {
+    string graph_optimizer_type = 1;
+    bool use_gnss = 2;
+    bool use_loop_close = 3;
+    int32 optimize_step_with_key_frame = 4;
+    int32 optimize_step_with_gnss = 5;
+    int32 optimize_step_with_loop = 6;
+    double key_frame_distance = 7;
+    string odom_edge_noise = 8;
+    string loop_edge_noise = 9;
+    string gnss_edge_noise = 10;
+}

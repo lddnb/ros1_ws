@@ -1,7 +1,9 @@
 # pragma once
 
+#include <memory>
 #include <ros/ros.h>
 
+#include "back_end/back_end.hpp"
 #include "global_definition/global_definition.h"
 #include "subscriber/cloud_subscriber.hpp"
 #include "subscriber/gnss_subscriber.hpp"
@@ -46,6 +48,7 @@ private:
     std::unique_ptr<OdometryPublisher> gnss_pub_ptr_;
     std::unique_ptr<FrontEnd> front_end_ptr_;
     std::unique_ptr<DistortionAdjust> distortion_adjust_ptr_;
+    std::unique_ptr<BackEnd> back_end_ptr_;
 
     std::deque<CloudData> cloud_data_buff_;
     std::deque<ImuData> imu_data_buff_;

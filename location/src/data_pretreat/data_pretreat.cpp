@@ -1,4 +1,6 @@
 #include "data_pretreat/data_pretreat.hpp"
+#include "proto/back_end.pb.h"
+#include <memory>
 
 namespace location {
 
@@ -17,6 +19,7 @@ FrontEndFlow::FrontEndFlow(ros::NodeHandle & nh, const proto::FrontEndOptions & 
     distortion_adjust_ptr_ = std::make_unique<DistortionAdjust>();
     
     front_end_ptr_ = std::make_unique<FrontEnd>(options);
+    back_end_ptr_ = std::make_unique<BackEnd>(options.back_end_options());
 
     lidar_to_imu_ = Eigen::Matrix4f::Identity();
     local_map_ptr_.reset(new CloudData::CLOUD());

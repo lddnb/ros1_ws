@@ -1,5 +1,6 @@
 #include <vector>
 #include "front_end/front_end.hpp"
+#include "back_end/back_end.hpp"
 #include <pcl/common/transforms.h>
 #include <glog/logging.h>
 #include <iomanip>
@@ -16,6 +17,7 @@ proto::FrontEndOptions CreateFrontEndOptions(common::LuaParameterDictionary* con
     options.set_step_size(lua_parameter_dictionary->GetDouble("step_size"));
     options.set_trans_eps(lua_parameter_dictionary->GetDouble("trans_eps"));
     options.set_max_iter(lua_parameter_dictionary->GetInt("max_iter"));
+    *options.mutable_back_end_options() = CreateBackEndOptions(lua_parameter_dictionary->GetDictionary("back_end_options").get());
     return options;
 }
 

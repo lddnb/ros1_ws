@@ -116,7 +116,6 @@ file(GLOB_RECURSE ALL_SRCS "*.cpp")
 file(GLOB_RECURSE NODE_SRCS "src/*_node.cpp")
 list(REMOVE_ITEM ALL_SRCS ${NODE_SRCS})
 
-
 message("ALL_SRCS = " ${ALL_SRCS})
 
 # 必须要在生成执行文件或库文件的时候添加proto的cc文件，编译时才能生成cc和pb.h文件
