@@ -26,7 +26,7 @@ BackEnd::BackEnd(const proto::BackEndOptions & options)
 : options_(options)
 {
   if (options_.graph_optimizer_type() == "g2o") {
-    graph_optimizer_ptr_ = std::make_unique<G2oGraphOptimizer>("lm_var");
+    graph_optimizer_ptr_ = std::make_unique<G2oGraphOptimizer>("lm_var_cholmod");
   } else {
     LOG(ERROR) << "Config graph_optimizer_type wrong: " << options_.graph_optimizer_type();
   }
@@ -44,10 +44,12 @@ void BackEnd::GetNoiseByString(Eigen::VectorXd & matrix, const std::string & str
   for (auto c : str) {
     if (c == ' ') {
       vec.emplace_back(stod(tmp));
+      tmp.clear();
     } else {
       tmp.push_back(c);
     }
   }
+  vec.emplace_back(stod(tmp));
   matrix.resize(vec.size());
   for (size_t i = 0; i < vec.size(); ++i) {
     matrix(i) = vec.at(i);
@@ -109,7 +111,6 @@ void BackEnd::GetLatestKeyGnss(KeyFrame & key_frame)
 
 void BackEnd::InitParams()
 {
-  key_frame_distance_ = 10;  // TODO
   new_key_frame_cnt_ = 0;
   new_gnss_cnt_ = 0;
   new_loop_cnt_ = 0;
@@ -162,7 +163,7 @@ bool BackEnd::MaybeNewKeyFrame(const CloudData & cloud_data, const PoseData & la
 
   if (fabs(laser_odom.pose(0,3) - last_key_pose(0,3)) + 
     fabs(laser_odom.pose(1,3) - last_key_pose(1,3)) +
-    fabs(laser_odom.pose(2,3) - last_key_pose(2,3)) > key_frame_distance_) {
+    fabs(laser_odom.pose(2,3) - last_key_pose(2,3)) > options_.key_frame_distance()) {
       has_new_key_frame_ = true;
       last_key_pose = laser_odom.pose;
   }
@@ -177,7 +178,7 @@ bool BackEnd::MaybeNewKeyFrame(const CloudData & cloud_data, const PoseData & la
 
     current_key_gnss_.time = gnss_odom.time;
     current_key_gnss_.index = key_frame.index;
-    current_key_frame_.pose = gnss_odom.pose;
+    current_key_gnss_.pose = gnss_odom.pose;
   }
 
   return has_new_key_frame_;

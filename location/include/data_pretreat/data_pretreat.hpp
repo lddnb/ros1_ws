@@ -2,9 +2,10 @@
 
 #include <memory>
 #include <ros/ros.h>
-
+#include <nav_msgs/Path.h>
 #include "back_end/back_end.hpp"
 #include "global_definition/global_definition.h"
+#include "ros/publisher.h"
 #include "subscriber/cloud_subscriber.hpp"
 #include "subscriber/gnss_subscriber.hpp"
 #include "subscriber/imu_subscriber.hpp"
@@ -33,7 +34,9 @@ private:
     bool PublishData();
     bool UpdateGNSSOdometry();
     bool UpdateLaserOdometry();
+    bool UpdateBackEnd();
     bool TransformData();
+    bool PublishOptimizedPath();
 
 private:
     std::unique_ptr<CloudSubscriber> cloud_sub_ptr_;
@@ -66,6 +69,9 @@ private:
     CloudData::CLOUD_PTR current_scan_ptr_;
     Eigen::Matrix4f gnss_odometry_;
     Eigen::Matrix4f laser_odometry_;
+
+    ros::Publisher path_pub_;
+    nav_msgs::Path path_;
 };
 
 } // namespace location

@@ -1,5 +1,8 @@
 #include "data_pretreat/data_pretreat.hpp"
+#include "back_end/back_end.hpp"
 #include "proto/back_end.pb.h"
+#include "sensor_data/pose_data.hpp"
+#include <Eigen/src/Geometry/Quaternion.h>
 #include <memory>
 
 namespace location {
@@ -27,6 +30,10 @@ FrontEndFlow::FrontEndFlow(ros::NodeHandle & nh, const proto::FrontEndOptions & 
     current_scan_ptr_.reset(new CloudData::CLOUD());
     gnss_odometry_ = Eigen::Matrix4f::Identity();
     laser_odometry_ = Eigen::Matrix4f::Identity();
+
+    path_pub_ = nh.advertise<nav_msgs::Path>("trajectory", 1);
+    path_.header.stamp = ros::Time::now();
+    path_.header.frame_id = "map";
 }
 
 bool FrontEndFlow::Run()
@@ -49,6 +56,10 @@ bool FrontEndFlow::Run()
         UpdateGNSSOdometry();
         if (UpdateLaserOdometry()) {
             PublishData();
+            UpdateBackEnd();
+        }
+        if (back_end_ptr_->HasNewOptimized()) {
+          PublishOptimizedPath();
         }
     }
     return true;
@@ -183,19 +194,47 @@ bool FrontEndFlow::UpdateLaserOdometry()
     return true;
 }
 
-bool FrontEndFlow::PublishData()
+bool FrontEndFlow::UpdateBackEnd()
 {
-    gnss_pub_ptr_->Publish(gnss_odometry_);
-    laser_odom_pub_ptr_->Publish(laser_odometry_);
-
-    front_end_ptr_->GetCurrentScan(current_scan_ptr_);
-    cloud_pub_ptr_->Publish(current_scan_ptr_);
-
-    if (front_end_ptr_->GetNewLocalMap(local_map_ptr_)) {
-        local_map_pub_ptr_->Publish(local_map_ptr_);
-    }
-    return true;
+  static PoseData current_laser_odom_, current_gnss_odom_;
+  current_laser_odom_.pose = laser_odometry_;
+  current_gnss_odom_.pose = gnss_odometry_;
+  return back_end_ptr_->Update(current_cloud_data_, current_laser_odom_, current_gnss_odom_);
 }
 
+bool FrontEndFlow::PublishData()
+{
+  gnss_pub_ptr_->Publish(gnss_odometry_);
+  laser_odom_pub_ptr_->Publish(laser_odometry_);
+  front_end_ptr_->GetCurrentScan(current_scan_ptr_);
+  cloud_pub_ptr_->Publish(current_scan_ptr_);
+  if (front_end_ptr_->GetNewLocalMap(local_map_ptr_)) {
+      local_map_pub_ptr_->Publish(local_map_ptr_);
+  }
+  return true;
+}
+
+bool FrontEndFlow::PublishOptimizedPath()
+{
+  std::deque<KeyFrame> optimized_pose;
+  back_end_ptr_->GetOptimizedKeyFrames(optimized_pose);
+  path_.poses.clear();
+  for (auto frame : optimized_pose) {
+    geometry_msgs::PoseStamped this_pose_stamped;
+    this_pose_stamped.pose.position.x = frame.pose(0, 3);
+    this_pose_stamped.pose.position.y = frame.pose(1, 3);
+    this_pose_stamped.pose.position.z = frame.pose(2, 3);
+    Eigen::Quaternionf q = Eigen::Quaternionf(frame.pose.block<3, 3>(0, 0));
+    this_pose_stamped.pose.orientation.w = q.w();
+    this_pose_stamped.pose.orientation.x = q.x();
+    this_pose_stamped.pose.orientation.y = q.y();
+    this_pose_stamped.pose.orientation.z = q.z();
+    this_pose_stamped.header.stamp = ros::Time::now();
+    this_pose_stamped.header.frame_id = "map";
+    path_.poses.emplace_back(this_pose_stamped);
+  }
+  path_pub_.publish(path_);
+  return true;
+}
 
 } // namespace location
