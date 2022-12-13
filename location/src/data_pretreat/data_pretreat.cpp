@@ -31,7 +31,7 @@ FrontEndFlow::FrontEndFlow(ros::NodeHandle & nh, const proto::FrontEndOptions & 
     gnss_odometry_ = Eigen::Matrix4f::Identity();
     laser_odometry_ = Eigen::Matrix4f::Identity();
 
-    path_pub_ = nh.advertise<nav_msgs::Path>("trajectory", 1);
+    path_pub_ = nh.advertise<geometry_msgs::PoseArray>("trajectory", 1);
     path_.header.stamp = ros::Time::now();
     path_.header.frame_id = "map";
 }
@@ -218,21 +218,23 @@ bool FrontEndFlow::PublishOptimizedPath()
 {
   std::deque<KeyFrame> optimized_pose;
   back_end_ptr_->GetOptimizedKeyFrames(optimized_pose);
+  path_.header.stamp = ros::Time::now();
+  path_.header.frame_id = "map";
   path_.poses.clear();
+  LOG(INFO) << "optimized_pose size: " << optimized_pose.size();
   for (auto frame : optimized_pose) {
-    geometry_msgs::PoseStamped this_pose_stamped;
-    this_pose_stamped.pose.position.x = frame.pose(0, 3);
-    this_pose_stamped.pose.position.y = frame.pose(1, 3);
-    this_pose_stamped.pose.position.z = frame.pose(2, 3);
+    geometry_msgs::Pose pose;
+    pose.position.x = frame.pose(0, 3);
+    pose.position.y = frame.pose(1, 3);
+    pose.position.z = frame.pose(2, 3);
     Eigen::Quaternionf q = Eigen::Quaternionf(frame.pose.block<3, 3>(0, 0));
-    this_pose_stamped.pose.orientation.w = q.w();
-    this_pose_stamped.pose.orientation.x = q.x();
-    this_pose_stamped.pose.orientation.y = q.y();
-    this_pose_stamped.pose.orientation.z = q.z();
-    this_pose_stamped.header.stamp = ros::Time::now();
-    this_pose_stamped.header.frame_id = "map";
-    path_.poses.emplace_back(this_pose_stamped);
+    pose.orientation.w = q.w();
+    pose.orientation.x = q.x();
+    pose.orientation.y = q.y();
+    pose.orientation.z = q.z();
+    path_.poses.emplace_back(pose);
   }
+  LOG(INFO) << "path pose size: " << path_.poses.size();
   path_pub_.publish(path_);
   return true;
 }

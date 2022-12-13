@@ -82,6 +82,7 @@ bool BackEnd::ForceOptimize()
 void BackEnd::GetOptimizedKeyFrames(std::deque<KeyFrame> & key_frames_deque)
 {
   KeyFrame key_frame;
+  graph_optimizer_ptr_->GetOptimizedPose(optimized_pose_);
   for (size_t i = 0; i < optimized_pose_.size(); ++i) {
     key_frame.pose = optimized_pose_.at(i);
     key_frame.index = i;
@@ -96,6 +97,7 @@ bool BackEnd::HasNewKeyFrame()
 
 bool BackEnd::HasNewOptimized()
 {
+  LOG(INFO) << "has_new_optimized_: " << has_new_optimized_;
   return has_new_optimized_;
 }
 
@@ -186,23 +188,24 @@ bool BackEnd::MaybeNewKeyFrame(const CloudData & cloud_data, const PoseData & la
 
 bool BackEnd::MaybeOptimized()
 {
-  bool need_optimize = false;
+  LOG(INFO) << "new_gnss_cnt_: " << new_gnss_cnt_;
+  LOG(INFO) << "new_key_frame_cnt_: " << new_key_frame_cnt_;
+  LOG(INFO) << "new_loop_cnt_: " << new_loop_cnt_;
   if (new_gnss_cnt_ >= options_.optimize_step_with_gnss() ||
     new_key_frame_cnt_ >= options_.optimize_step_with_key_frame() ||
     new_loop_cnt_ >= options_.optimize_step_with_loop()) 
   {
-    need_optimize = true;
+    new_gnss_cnt_ = 0;
+    new_key_frame_cnt_ = 0;
+    new_loop_cnt_ = 0;
+    if (graph_optimizer_ptr_->Optimize()) {
+      has_new_optimized_ = true;
+    }
+    LOG(INFO) << "MaybeOptimized: True";
+    return true;
   } else {
+    LOG(INFO) << "MaybeOptimized: False";
     return false;
   }
-
-  new_gnss_cnt_ = 0;
-  new_key_frame_cnt_ = 0;
-  new_loop_cnt_ = 0;
-
-  if (graph_optimizer_ptr_->Optimize()) {
-    has_new_optimized_ = true;
-  }
-  return true;
 }
 } // namespace location

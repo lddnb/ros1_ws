@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <ros/ros.h>
-#include <nav_msgs/Path.h>
+#include <geometry_msgs/PoseArray.h>
 #include "back_end/back_end.hpp"
 #include "global_definition/global_definition.h"
 #include "ros/publisher.h"
@@ -71,7 +71,7 @@ private:
     Eigen::Matrix4f laser_odometry_;
 
     ros::Publisher path_pub_;
-    nav_msgs::Path path_;
+    geometry_msgs::PoseArray path_;
 };
 
 } // namespace location
